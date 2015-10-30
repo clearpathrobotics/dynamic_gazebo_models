@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>dynamic_gazebo_models</name>
-  <version>0.0.0</version>
+  <version>0.1.0</version>
   <description>Dynamic models for Gazebo</description>
 
   <maintainer email="mohit.appi@gmail.com">MohitSridhar</maintainer>
