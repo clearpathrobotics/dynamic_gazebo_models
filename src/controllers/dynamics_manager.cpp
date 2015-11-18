@@ -43,8 +43,8 @@
 #define TYPE_DOOR_STR "door"
 #define TYPE_ELEVATOR_STR "elevator"
 
-#define DEFAULT_SLIDE_SPEED 1	// in m/s
-#define DEFAULT_FLIP_SPEED 1.57	// in rad/s
+#define DEFAULT_SLIDE_SPEED 1   // in m/s
+#define DEFAULT_FLIP_SPEED 1.57 // in rad/s
 
 #define STATE_OPEN true
 #define STATE_CLOSE false
@@ -220,7 +220,7 @@ public:
       return false;
     }
 
-	// Publish the IDs of the active doors in the group
+    // Publish the IDs of the active doors in the group
     std_msgs::UInt32MultiArray active_doors = uintVectorToStdMsgs(currGroup.getActiveUnits());
     door_active_pub.publish(active_doors);
 
@@ -284,7 +284,7 @@ public:
       return false;
     }
 
-	// Check if there is an exiting group with the same name, which might cause conflicts:
+    // Check if there is an exiting group with the same name, which might cause conflicts:
     int groupIndex = getGroupIndex(req.group.group_name);
     if (groupIndex != INDEX_NOT_FOUND)
     {
@@ -341,7 +341,7 @@ public:
     }
     else
     {
-      return INVALID;				// invalid type in request
+      return INVALID;                           // invalid type in request
     }
   }
 

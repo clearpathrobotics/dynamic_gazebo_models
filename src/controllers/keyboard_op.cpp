@@ -121,12 +121,12 @@ public:
     readLineInput(input);
     std::vector<uint32_t> activeList = parseActiveList(input);
 
-	// Delete previous group if already initialized. Note: IGNORE the warning produced during initialization about delete service failing
+    // Delete previous group if already initialized. Note: IGNORE the warning produced during initialization about delete service failing
     dynamic_gazebo_models::DeleteGroup deleteSrv;
     deleteSrv.request.group_name = CONTROL_GROUP_NAME;
     delete_group_client.call(deleteSrv);
 
-	// Add new group with the desired units
+    // Add new group with the desired units
     dynamic_gazebo_models::AddGroup addSrv;
     addSrv.request.group.group_name = CONTROL_GROUP_NAME;
     addSrv.request.group.type = type == DOOR ? "door" : "elevator";
@@ -157,7 +157,7 @@ public:
     std::string active_list_str(input);
     std::vector<uint32_t> active_list;
 
-	// parse csv-style input (also remove whitespace):
+    // parse csv-style input (also remove whitespace):
     std::string::iterator end_pos = std::remove(active_list_str.begin(), active_list_str.end(), ' ');
     active_list_str.erase(end_pos, active_list_str.end());
 
@@ -196,7 +196,7 @@ public:
 
   void setupCallTemplates()
   {
-	// DOOR based services:
+    // DOOR based services:
     openDoorsCall.request.group_name = CONTROL_GROUP_NAME;
     openDoorsCall.request.state = true;
 
@@ -208,7 +208,7 @@ public:
     setVelDoorsCall.request.lin_y = DEFAULT_SLIDE_SPEED;
     setVelDoorsCall.request.ang_z = DEFAULT_FLIP_SPEED;
 
-	// ELEVATOR based services:
+    // ELEVATOR based services:
     targetFloorCall.request.group_name = CONTROL_GROUP_NAME;
     targetFloorCall.request.target_floor = 0;
 
@@ -244,7 +244,7 @@ public:
     {
       readLineInput(input);
 
-	// check if the type was toggled (between 'door' & 'elevator')
+      // check if the type was toggled (between 'door' & 'elevator')
       if (setControlType(input))
       {
         continue;

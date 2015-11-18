@@ -51,7 +51,7 @@
 #define DIRECTION_SLIDE_LEFT "left"
 #define DIRECTION_SLIDE_RIGHT "right"
 
-#define CONTEXT_SPACE_X_RANGE 2.0	// in m
+#define CONTEXT_SPACE_X_RANGE 2.0       // in m
 #define CONTEXT_SPACE_Y_RANGE 2.0
 #define CONTEXT_SPACE_Z_RANGE 2.0
 
@@ -213,14 +213,14 @@ private:
   {
     isActive = false;
 
-	// find the elevator reference number
+    // find the elevator reference number
     std::string door_ref_num_str = door_model_name;
     replaceSubstring(door_ref_num_str, model_domain_space, "");
     door_ref_num = atoi(door_ref_num_str.c_str());
 
     if (type == SLIDE)
     {
-	// compute slide constraints
+      // compute slide constraints
       float spawnPosX = model->GetWorldPose().pos.x;
       minPosX = door_direction.compare(DIRECTION_SLIDE_RIGHT) == 0 ? spawnPosX - max_trans_dist : spawnPosX;
       maxPosX = door_direction.compare(DIRECTION_SLIDE_RIGHT) == 0 ? spawnPosX : spawnPosX + max_trans_dist;
@@ -371,12 +371,12 @@ private:
     return(s.replace(s.find(toReplace), toReplace.length(), replaceWith));
   }
 
-	// Deprecated function:
+  // Deprecated function:
   std::vector<std::string> parseTopicStr(std::string bot_pose_topics_str)
   {
     std::vector<std::string> bot_pose_topic_list;
 
-	// parse csv-style input (also remove whitespace):
+    // parse csv-style input (also remove whitespace):
     std::string::iterator end_pos = std::remove(bot_pose_topics_str.begin(), bot_pose_topics_str.end(), ' ');
     bot_pose_topics_str.erase(end_pos, bot_pose_topics_str.end());
 

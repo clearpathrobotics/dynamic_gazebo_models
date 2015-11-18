@@ -220,7 +220,7 @@ private:
   {
     std::vector<double> floor_heights;
 
-	// parse csv-style input (also remove whitespace):
+    // parse csv-style input (also remove whitespace):
     std::string::iterator end_pos = std::remove(floor_heights_str.begin(), floor_heights_str.end(), ' ');
     floor_heights_str.erase(end_pos, floor_heights_str.end());
 
