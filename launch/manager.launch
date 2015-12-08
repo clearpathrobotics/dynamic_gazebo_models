@@ -1,0 +1,3 @@
+<launch>
+  <node pkg="dynamic_gazebo_models" type="dynamics_manager" name="dynamics_manager"/>
+</launch>

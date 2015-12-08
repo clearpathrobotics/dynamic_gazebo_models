@@ -1,0 +1,34 @@
+<launch>
+  <arg name="id" default="1"/>
+  <arg name="name" default="door_$(arg id)"/>
+
+  <arg name="size" default="1.0 0.05 2.0"/>
+  <arg name="type" default="slide"/>
+  <arg name="direction" default="left"/>
+  <arg name="max_trans_dist" default="1.0"/>
+
+  <arg name="gzpose" default="-x 0.0 -y 0.0 -z 1.1 -R 0.0 -P 0.0 -Y 0.0"/>
+
+  <arg name="add_group_srv" default="/model_dynamics_manager/add_control_group"/>
+
+  <env name="GAZEBO_MODEL_PATH" value="$(find dynamic_gazebo_models)/models:$(optenv GAZEBO_MODEL_PATH)"/>
+
+  <param name="$(arg name)" command="$(find xacro)/xacro.py '$(find dynamic_gazebo_models)/models/door.sdf.xacro' name:='$(arg name)' size:='$(arg size)' type:='$(arg type)' direction:='$(arg direction)' max_trans_dist:='$(arg max_trans_dist)'"/>
+
+  <node pkg="gazebo_ros" type="spawn_model" name="$(anon spawn_door)"
+        args="-sdf -param $(arg name) -model $(arg name) $(arg gzpose)"
+        respawn="false"/>
+
+  <node pkg="rosservice" type="rosservice" name="$(anon add_group_srv)"
+        args="call
+    $(arg add_group_srv)
+    '{
+    group:
+      {
+        group_name: '$(arg name)',
+        type: 'door',
+        active_units: [$(arg id)]
+      }
+    }'
+  "/>
+</launch>
