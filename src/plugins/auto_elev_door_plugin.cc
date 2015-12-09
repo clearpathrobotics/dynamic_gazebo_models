@@ -32,7 +32,7 @@
 #include <std_msgs/Int32.h>
 
 #define DEFAULT_SLIDE_DISTANCE 0.711305
-#define DEFAULT_SLIDE_SPEED 1	// in m/s
+#define DEFAULT_SLIDE_SPEED 1   // in m/s
 
 #define HEIGHT_LEVEL_TOLERANCE 1.5
 
@@ -192,18 +192,18 @@ private:
 
   void initVars()
   {
-	// parse elevator reference number:
+    // parse elevator reference number:
     std::string elevator_ref_num_str = elevator_ref_name;
     replaceSubstring(elevator_ref_num_str, elevator_domain_space, "");
     elevator_ref_num = atoi(elevator_ref_num_str.c_str());
 
     ROS_ASSERT(direction == LEFT || direction == RIGHT);
 
-	// compute open-close velocities
+    // compute open-close velocities
     openVel = direction == RIGHT ? -slide_speed : slide_speed;
     closeVel = direction == RIGHT ? slide_speed : -slide_speed;
 
-	// compute slide constraints
+    // compute slide constraints
     float spawnPosX = model->GetWorldPose().pos.x;
     minPosX = direction == RIGHT ? spawnPosX - max_trans_dist : spawnPosX;
     maxPosX = direction == RIGHT ? spawnPosX : spawnPosX + max_trans_dist;
@@ -226,14 +226,14 @@ private:
     float currDoorHeight = model->GetWorldPose().pos.z;
     float doorElevHeightDiff = fabs(currElevHeight - currDoorHeight);
 
-	// Primary condition: the elevator is behind the doors
+    // Primary condition: the elevator is behind the doors
     if (doorElevHeightDiff > HEIGHT_LEVEL_TOLERANCE || estCurrFloor != targetFloor)
     {
       setDoorSlideVel(closeVel);
       return;
     }
 
-	// Secondary condition: check if the door has to be forced open/closed [OVERIDE auto open-close]
+    // Secondary condition: check if the door has to be forced open/closed [OVERIDE auto open-close]
     if (doorState == ELEV_DOOR_STATE_OPEN)
     {
       setDoorSlideVel(openVel);
@@ -245,13 +245,13 @@ private:
       return;
     }
 
-	// Else: open/close doors based on target floor reference
+    // Else: open/close doors based on target floor reference
     setDoorSlideVel(openVel);
   }
 
   void setDoorSlideVel(float vel)
   {
-    doorLink->SetLinearVel(math::Vector3(vel, vel, 0));					// we set the vel for both x & y directions since we don't know which direction the door is facing
+    doorLink->SetLinearVel(math::Vector3(vel, vel, 0));                                 // we set the vel for both x & y directions since we don't know which direction the door is facing
   }
 
   void checkSlideConstraints()

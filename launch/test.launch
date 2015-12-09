@@ -1,0 +1,13 @@
+<launch>
+  <include file="$(find dynamic_gazebo_models)/launch/empty_world.launch">
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+    <arg name="world_name" value="$(find dynamic_gazebo_models)/worlds/empty.world"/>
+  </include>
+
+  <!-- Model Dynamic Manager -->
+  <node pkg="dynamic_gazebo_models" type="dynamics_manager" name="dynamics_manager"/>
+</launch>

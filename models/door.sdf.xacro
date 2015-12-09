@@ -1,0 +1,88 @@
+<sdf version='1.4' xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:arg name="mass" default="10.0"/>
+
+  <xacro:arg name="size" default="1.0 0.05 2.0"/>
+
+  <xacro:arg name="type" default="slide"/>
+  <xacro:arg name="direction" default="left"/>
+
+  <xacro:arg name="max_trans_dist" default="1.0"/>
+
+  <model name='sliding_door'>
+    <link name='door'>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>$(arg mass)</mass>
+        <inertia>
+          <ixx>1</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.1</iyy>
+          <iyz>0</iyz>
+          <izz>0.1</izz>
+        </inertia>
+      </inertial>
+      <collision name='door_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>$(arg size)</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='door_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>$(arg size)</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Green</name>
+            <uri>__default__</uri>
+          </script>
+        </material>
+      </visual>
+      <gravity>0</gravity>
+      <velocity_decay>
+        <linear>0</linear>
+        <angular>0</angular>
+      </velocity_decay>
+      <self_collide>0</self_collide>
+    </link>
+
+    <joint name='grounding_joint' type='prismatic'>
+      <child>door</child>
+      <parent>world</parent>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>0</lower>
+          <upper>-0.05</upper>
+          <effort>10</effort>
+          <velocity>0.5</velocity>
+        </limit>
+        <dynamics>
+          <damping>1</damping>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <plugin name="door_plugin" filename="libdoor_plugin.so">
+      <door_type>$(arg type)</door_type>
+      <model_domain_space>door_</model_domain_space>
+      <door_direction>$(arg direction)</door_direction>
+      <max_trans_dist>$(arg max_trans_dist)</max_trans_dist>
+    </plugin>
+
+  </model>
+</sdf>
