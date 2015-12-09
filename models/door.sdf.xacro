@@ -6,9 +6,15 @@
   <xacro:arg name="type" default="slide"/>
   <xacro:arg name="direction" default="left"/>
 
+  <xacro:arg name="color" default="Green"/>
+
+  <xacro:arg name="axis" default="1 0 0"/>
+  <xacro:arg name="effort" default="10.0"/>
+  <xacro:arg name="velocity" default="1.0"/>
+
   <xacro:arg name="max_trans_dist" default="1.0"/>
 
-  <model name='sliding_door'>
+  <model name='door'>
     <link name='door'>
       <inertial>
         <pose>0 0 0 0 0 0</pose>
@@ -22,7 +28,7 @@
           <izz>0.1</izz>
         </inertia>
       </inertial>
-      <collision name='door_collision'>
+      <collision name='collision'>
         <pose>0 0 0 0 0 0</pose>
         <geometry>
           <box>
@@ -38,7 +44,7 @@
           </friction>
         </surface>
       </collision>
-      <visual name='door_visual'>
+      <visual name='visual'>
         <pose>0 0 0 0 0 0</pose>
         <geometry>
           <box>
@@ -47,7 +53,7 @@
         </geometry>
         <material>
           <script>
-            <name>Gazebo/Green</name>
+            <name>Gazebo/$(arg color)</name>
             <uri>__default__</uri>
           </script>
         </material>
@@ -60,16 +66,16 @@
       <self_collide>0</self_collide>
     </link>
 
-    <joint name='grounding_joint' type='prismatic'>
+    <joint name='door_joint' type='prismatic'>
       <child>door</child>
       <parent>world</parent>
       <axis>
-        <xyz>1 0 0</xyz>
+        <xyz>$(arg axis)</xyz>
         <limit>
           <lower>0</lower>
           <upper>-0.05</upper>
-          <effort>10</effort>
-          <velocity>0.5</velocity>
+          <effort>$(arg effort)</effort>
+          <velocity>$(arg velocity)</velocity>
         </limit>
         <dynamics>
           <damping>1</damping>
