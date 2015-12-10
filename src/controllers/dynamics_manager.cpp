@@ -368,7 +368,7 @@ public:
   {
     while (rosNode.ok())
     {
-      ros::spinOnce();
+      ros::spin();
     }
   }
 };
