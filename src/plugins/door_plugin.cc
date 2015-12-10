@@ -333,6 +333,7 @@ private:
         constrainedPose.pos.z = currDoorPosZ;
       }
 
+      constrainedPose.rot.w = model->GetWorldPose().rot.w;
       constrainedPose.rot.x = model->GetWorldPose().rot.x;
       constrainedPose.rot.y = model->GetWorldPose().rot.y;
       constrainedPose.rot.z = model->GetWorldPose().rot.z;
