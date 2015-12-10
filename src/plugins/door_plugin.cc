@@ -50,6 +50,8 @@
 #define DIRECTION_FLIP_COUNTER_CLOCKWISE "counter_clockwise"
 #define DIRECTION_SLIDE_LEFT "left"
 #define DIRECTION_SLIDE_RIGHT "right"
+#define DIRECTION_SLIDE_UP "up"
+#define DIRECTION_SLIDE_DOWN "down"
 
 #define CONTEXT_SPACE_X_RANGE 2.0       // in m
 #define CONTEXT_SPACE_Y_RANGE 2.0
@@ -75,7 +77,7 @@ private:
 
   int door_ref_num;
   std::string door_type, door_model_name, door_direction, model_domain_space;
-  float max_trans_dist, maxPosX, maxPosY, minPosX, minPosY;
+  double max_trans_dist, maxPosX, maxPosY, maxPosZ, minPosX, minPosY, minPosZ;
 
   ros::NodeHandle* rosNode;
   transport::NodePtr gazeboNode;
@@ -169,7 +171,7 @@ private:
       }
       else
       {
-        max_trans_dist = _sdf->GetElement("max_trans_dist")->Get<float>();
+        max_trans_dist = _sdf->GetElement("max_trans_dist")->Get<double>();
       }
     }
   }
@@ -178,7 +180,8 @@ private:
   {
     if (type == FLIP)
     {
-      if (door_direction.compare(DIRECTION_FLIP_CLOCKWISE) != 0 && door_direction.compare(DIRECTION_FLIP_COUNTER_CLOCKWISE) != 0)
+      if (door_direction != DIRECTION_FLIP_CLOCKWISE &&
+          door_direction != DIRECTION_FLIP_COUNTER_CLOCKWISE)
       {
         ROS_WARN("Invalid door direction specified. Only two states possible: 'clockwise' OR 'counter_clockwise'. Defaulting to 'clockwise'");
         door_direction = DIRECTION_FLIP_CLOCKWISE;
@@ -186,9 +189,12 @@ private:
     }
     else if (type == SLIDE)
     {
-      if (door_direction.compare(DIRECTION_SLIDE_LEFT) != 0 && door_direction.compare(DIRECTION_SLIDE_RIGHT) != 0)
+      if (door_direction != DIRECTION_SLIDE_LEFT &&
+          door_direction != DIRECTION_SLIDE_RIGHT &&
+          door_direction != DIRECTION_SLIDE_UP &&
+          door_direction != DIRECTION_SLIDE_DOWN)
       {
-        ROS_WARN("Invalid door direction specified. Only two states possible: 'left' OR 'right'. Defaulting to 'left'");
+        ROS_WARN("Invalid door direction specified. Only four states possible: 'left' OR 'right' OR 'up' or 'down'. Defaulting to 'left'");
         door_direction = DIRECTION_SLIDE_LEFT;
       }
     }
@@ -221,13 +227,17 @@ private:
     if (type == SLIDE)
     {
       // compute slide constraints
-      float spawnPosX = model->GetWorldPose().pos.x;
-      minPosX = door_direction.compare(DIRECTION_SLIDE_RIGHT) == 0 ? spawnPosX - max_trans_dist : spawnPosX;
-      maxPosX = door_direction.compare(DIRECTION_SLIDE_RIGHT) == 0 ? spawnPosX : spawnPosX + max_trans_dist;
+      double spawnPosX = model->GetWorldPose().pos.x;
+      minPosX = door_direction != DIRECTION_SLIDE_RIGHT ? spawnPosX - max_trans_dist : spawnPosX;
+      maxPosX = door_direction != DIRECTION_SLIDE_RIGHT ? spawnPosX : spawnPosX + max_trans_dist;
 
-      float spawnPosY = model->GetWorldPose().pos.y;
-      minPosY = door_direction.compare(DIRECTION_SLIDE_RIGHT) == 0 ? spawnPosY - max_trans_dist : spawnPosY;
-      maxPosY = door_direction.compare(DIRECTION_SLIDE_RIGHT) == 0 ? spawnPosY : spawnPosY + max_trans_dist;
+      double spawnPosY = model->GetWorldPose().pos.y;
+      minPosY = door_direction != DIRECTION_SLIDE_RIGHT ? spawnPosY - max_trans_dist : spawnPosY;
+      maxPosY = door_direction != DIRECTION_SLIDE_RIGHT ? spawnPosY : spawnPosY + max_trans_dist;
+
+      double spawnPosZ = model->GetWorldPose().pos.z;
+      minPosZ = door_direction != DIRECTION_SLIDE_UP ? spawnPosZ - max_trans_dist : spawnPosZ;
+      maxPosZ = door_direction != DIRECTION_SLIDE_UP ? spawnPosZ : spawnPosZ + max_trans_dist;
     }
   }
 
@@ -256,8 +266,8 @@ private:
       }
       else if (type == SLIDE)
       {
-        setLinearVel(msg->linear.x, msg->linear.y);
-        ROS_INFO("Door '%s' - Linear x: [%f], y: [%f]", door_model_name.c_str(), msg->linear.x, msg->linear.y);
+        setLinearVel(msg->linear.x, msg->linear.y, msg->linear.z);
+        ROS_INFO("Door '%s' - Linear x: [%f], y: [%f], z: [%f]", door_model_name.c_str(), msg->linear.x, msg->linear.y, msg->linear.z);
       }
     }
   }
@@ -278,8 +288,9 @@ private:
   {
     if (type == SLIDE)
     {
-      float currDoorPosX = model->GetWorldPose().pos.x;
-      float currDoorPosY = model->GetWorldPose().pos.y;
+      const double currDoorPosX = model->GetWorldPose().pos.x;
+      const double currDoorPosY = model->GetWorldPose().pos.y;
+      const double currDoorPosZ = model->GetWorldPose().pos.z;
 
       math::Pose constrainedPose;
 
@@ -309,7 +320,20 @@ private:
         constrainedPose.pos.y = currDoorPosY;
       }
 
-      constrainedPose.pos.z = model->GetWorldPose().pos.z;
+      if (currDoorPosZ > maxPosZ)
+      {
+        constrainedPose.pos.z = maxPosZ;
+      }
+      else if (currDoorPosZ < minPosZ)
+      {
+        constrainedPose.pos.z = minPosZ;
+      }
+      else
+      {
+        constrainedPose.pos.z = currDoorPosZ;
+      }
+
+      constrainedPose.rot.w = model->GetWorldPose().rot.w;
       constrainedPose.rot.x = model->GetWorldPose().rot.x;
       constrainedPose.rot.y = model->GetWorldPose().rot.y;
       constrainedPose.rot.z = model->GetWorldPose().rot.z;
@@ -318,7 +342,7 @@ private:
     }
   }
 
-  void setAngularVel(float rot_z)
+  void setAngularVel(const double rot_z)
   {
     cmd_vel = math::Vector3();
 
@@ -332,19 +356,27 @@ private:
     }
   }
 
-  void setLinearVel(float lin_x, float lin_y)
+  void setLinearVel(const double x = 0.0, const double y = 0.0, const double z = 0.0)
   {
     cmd_vel = math::Vector3();
 
-    if (door_direction.compare(DIRECTION_SLIDE_LEFT) == 0)
+    if (door_direction == DIRECTION_SLIDE_LEFT)
     {
-      cmd_vel.x = -lin_x;
-      cmd_vel.y = -lin_y;
+      cmd_vel.x = -x;
+      cmd_vel.y = -y;
     }
-    else
+    else if (door_direction == DIRECTION_SLIDE_RIGHT)
     {
-      cmd_vel.x = lin_x;
-      cmd_vel.y = lin_y;
+      cmd_vel.x = x;
+      cmd_vel.y = y;
+    }
+    else if (door_direction == DIRECTION_SLIDE_UP)
+    {
+      cmd_vel.z = -z;
+    }
+    else if (door_direction == DIRECTION_SLIDE_DOWN)
+    {
+      cmd_vel.z = z;
     }
   }
 

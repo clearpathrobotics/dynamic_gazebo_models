@@ -112,12 +112,14 @@ public:
     {
       cmd_vel.linear.x = -DEFAULT_SLIDE_SPEED;
       cmd_vel.linear.y = -DEFAULT_SLIDE_SPEED;
+      cmd_vel.linear.z = -DEFAULT_SLIDE_SPEED;
       cmd_vel.angular.z = -DEFAULT_FLIP_SPEED;
     }
     else
     {
       cmd_vel.linear.x = DEFAULT_SLIDE_SPEED;
       cmd_vel.linear.y = DEFAULT_SLIDE_SPEED;
+      cmd_vel.linear.z = DEFAULT_SLIDE_SPEED;
       cmd_vel.angular.z = DEFAULT_FLIP_SPEED;
     }
 
@@ -137,6 +139,7 @@ public:
 
     cmd_vel.linear.x = req.lin_x;
     cmd_vel.linear.y = req.lin_y;
+    cmd_vel.linear.z = req.lin_z;
     cmd_vel.angular.z = req.ang_z;
 
     door_cmd_vel_pub.publish(cmd_vel);
@@ -365,7 +368,7 @@ public:
   {
     while (rosNode.ok())
     {
-      ros::spinOnce();
+      ros::spin();
     }
   }
 };

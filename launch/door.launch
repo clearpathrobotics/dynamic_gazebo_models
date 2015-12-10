@@ -5,6 +5,10 @@
   <arg name="size" default="1.0 0.05 2.0"/>
   <arg name="type" default="slide"/>
   <arg name="direction" default="left"/>
+  <arg name="color" default="Green"/>
+  <arg name="axis" default="1 0 0"/>
+  <arg name="effort" default="10.0"/>
+  <arg name="velocity" default="1.0"/>
   <arg name="max_trans_dist" default="1.0"/>
 
   <arg name="gzpose" default="-x 0.0 -y 0.0 -z 1.1 -R 0.0 -P 0.0 -Y 0.0"/>
@@ -13,7 +17,7 @@
 
   <env name="GAZEBO_MODEL_PATH" value="$(find dynamic_gazebo_models)/models:$(optenv GAZEBO_MODEL_PATH)"/>
 
-  <param name="$(arg name)" command="$(find xacro)/xacro.py '$(find dynamic_gazebo_models)/models/door.sdf.xacro' name:='$(arg name)' size:='$(arg size)' type:='$(arg type)' direction:='$(arg direction)' max_trans_dist:='$(arg max_trans_dist)'"/>
+  <param name="$(arg name)" command="$(find xacro)/xacro.py '$(find dynamic_gazebo_models)/models/door.sdf.xacro' name:='$(arg name)' size:='$(arg size)' type:='$(arg type)' direction:='$(arg direction)' color:='$(arg color)' axis:='$(arg axis)' effort:='$(arg effort)' velocity:='$(arg velocity)' max_trans_dist:='$(arg max_trans_dist)'"/>
 
   <node pkg="gazebo_ros" type="spawn_model" name="$(anon spawn_door)"
         args="-sdf -param $(arg name) -model $(arg name) $(arg gzpose)"
