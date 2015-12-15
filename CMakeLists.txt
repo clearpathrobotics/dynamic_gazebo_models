@@ -55,3 +55,7 @@ install(TARGETS dynamics_manager keyboard_op door_plugin elevator auto_door
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
+foreach(dir launch media models urdf worlds)
+    install(DIRECTORY ${dir}/
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/${dir})
+endforeach(dir)
