@@ -28,6 +28,7 @@
   <run_depend>tf</run_depend>
   <run_depend>gazebo_plugins</run_depend>
   <run_depend>message_runtime</run_depend>
+  <run_depend>rosservice</run_depend>
 
   <export>
     <gazebo_ros gazebo_media_path="${prefix}/media/meshes/"/>
