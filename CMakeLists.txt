@@ -19,6 +19,7 @@ generate_messages(DEPENDENCIES std_msgs geometry_msgs)
 
 #add catkin sourced packages:
 catkin_package(
+   LIBRARIES door_plugin elevator auto_door
    CATKIN_DEPENDS roscpp nodelet std_msgs geometry_msgs tf gazebo_plugins gazebo_ros message_runtime
 )
 
