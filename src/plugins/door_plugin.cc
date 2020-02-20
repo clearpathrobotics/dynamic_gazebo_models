@@ -67,9 +67,9 @@ class DoorPlugin : public ModelPlugin
 private:
   physics::ModelPtr model;
   physics::LinkPtr doorLink;
-  math::Pose currPose, currFpvPose;
+  ignition::math::Pose3<double> currPose, currFpvPose;
 
-  math::Vector3 cmd_vel;
+  ignition::math::Vector3<double> cmd_vel;
 
   bool isActive;
   int activeDoors[100];
@@ -227,15 +227,15 @@ private:
     if (type == SLIDE)
     {
       // compute slide constraints
-      double spawnPosX = model->GetWorldPose().pos.x;
+      double spawnPosX = model->WorldPose().Pos().X();
       minPosX = door_direction != DIRECTION_SLIDE_RIGHT ? spawnPosX - max_trans_dist : spawnPosX;
       maxPosX = door_direction != DIRECTION_SLIDE_RIGHT ? spawnPosX : spawnPosX + max_trans_dist;
 
-      double spawnPosY = model->GetWorldPose().pos.y;
+      double spawnPosY = model->WorldPose().Pos().Y();
       minPosY = door_direction != DIRECTION_SLIDE_RIGHT ? spawnPosY - max_trans_dist : spawnPosY;
       maxPosY = door_direction != DIRECTION_SLIDE_RIGHT ? spawnPosY : spawnPosY + max_trans_dist;
 
-      double spawnPosZ = model->GetWorldPose().pos.z;
+      double spawnPosZ = model->WorldPose().Pos().Z();
       minPosZ = door_direction != DIRECTION_SLIDE_UP ? spawnPosZ - max_trans_dist : spawnPosZ;
       maxPosZ = door_direction != DIRECTION_SLIDE_UP ? spawnPosZ : spawnPosZ + max_trans_dist;
     }
@@ -288,55 +288,55 @@ private:
   {
     if (type == SLIDE)
     {
-      const double currDoorPosX = model->GetWorldPose().pos.x;
-      const double currDoorPosY = model->GetWorldPose().pos.y;
-      const double currDoorPosZ = model->GetWorldPose().pos.z;
+      const double currDoorPosX = model->WorldPose().Pos().X();
+      const double currDoorPosY = model->WorldPose().Pos().Y();
+      const double currDoorPosZ = model->WorldPose().Pos().Z();
 
-      math::Pose constrainedPose;
+      ignition::math::Pose3<double> constrainedPose;
 
       if (currDoorPosX > maxPosX)
       {
-        constrainedPose.pos.x = maxPosX;
+        constrainedPose.Pos().X(maxPosX);
       }
       else if (currDoorPosX < minPosX)
       {
-        constrainedPose.pos.x = minPosX;
+        constrainedPose.Pos().X(minPosX);
       }
       else
       {
-        constrainedPose.pos.x = currDoorPosX;
+        constrainedPose.Pos().X(currDoorPosX);
       }
 
       if (currDoorPosY > maxPosY)
       {
-        constrainedPose.pos.y = maxPosY;
+        constrainedPose.Pos().Y(maxPosY);
       }
       else if (currDoorPosY < minPosY)
       {
-        constrainedPose.pos.y = minPosY;
+        constrainedPose.Pos().Y(minPosY);
       }
       else
       {
-        constrainedPose.pos.y = currDoorPosY;
+        constrainedPose.Pos().Y(currDoorPosY);
       }
 
       if (currDoorPosZ > maxPosZ)
       {
-        constrainedPose.pos.z = maxPosZ;
+        constrainedPose.Pos().Z(maxPosZ);
       }
       else if (currDoorPosZ < minPosZ)
       {
-        constrainedPose.pos.z = minPosZ;
+        constrainedPose.Pos().Z(minPosZ);
       }
       else
       {
-        constrainedPose.pos.z = currDoorPosZ;
+        constrainedPose.Pos().Z(currDoorPosZ);
       }
 
-      constrainedPose.rot.w = model->GetWorldPose().rot.w;
-      constrainedPose.rot.x = model->GetWorldPose().rot.x;
-      constrainedPose.rot.y = model->GetWorldPose().rot.y;
-      constrainedPose.rot.z = model->GetWorldPose().rot.z;
+      constrainedPose.Rot().W(model->WorldPose().Rot().W());
+      constrainedPose.Rot().X(model->WorldPose().Rot().X());
+      constrainedPose.Rot().Y(model->WorldPose().Rot().Y());
+      constrainedPose.Rot().Z(model->WorldPose().Rot().Z());
 
       model->SetWorldPose(constrainedPose);
     }
@@ -344,39 +344,39 @@ private:
 
   void setAngularVel(const double rot_z)
   {
-    cmd_vel = math::Vector3();
+    cmd_vel = ignition::math::Vector3<double>();
 
     if (door_direction.compare(DIRECTION_FLIP_CLOCKWISE) == 0)
     {
-      cmd_vel.z = rot_z;
+      cmd_vel.Z(rot_z);
     }
     else
     {
-      cmd_vel.z = -rot_z;
+      cmd_vel.Z(-rot_z);
     }
   }
 
   void setLinearVel(const double x = 0.0, const double y = 0.0, const double z = 0.0)
   {
-    cmd_vel = math::Vector3();
+    cmd_vel = ignition::math::Vector3<double>();
 
     if (door_direction == DIRECTION_SLIDE_LEFT)
     {
-      cmd_vel.x = -x;
-      cmd_vel.y = -y;
+      cmd_vel.X(-x);
+      cmd_vel.Y(-y);
     }
     else if (door_direction == DIRECTION_SLIDE_RIGHT)
     {
-      cmd_vel.x = x;
-      cmd_vel.y = y;
+      cmd_vel.X(x);
+      cmd_vel.Y(y);
     }
     else if (door_direction == DIRECTION_SLIDE_UP)
     {
-      cmd_vel.z = -z;
+      cmd_vel.Z(-z);
     }
     else if (door_direction == DIRECTION_SLIDE_DOWN)
     {
-      cmd_vel.z = z;
+      cmd_vel.Z(z);
     }
   }
 
