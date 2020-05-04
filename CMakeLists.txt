@@ -8,7 +8,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 ## is used, also find other catkin packages
 include(FindProtobuf)
 find_package(catkin REQUIRED COMPONENTS roscpp nodelet tf gazebo_plugins gazebo_ros message_generation geometry_msgs)
-find_package(Boost 1.40 COMPONENTS program_options REQUIRED)
+find_package(Boost 1.40 COMPONENTS program_options date_time filesystem iostreams regex system thread REQUIRED)
 find_package(Protobuf REQUIRED)
 
 #add services:
