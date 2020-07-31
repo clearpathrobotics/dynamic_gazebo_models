@@ -268,7 +268,7 @@ private:
   void directElevator()
   {
     float targetHeight = floorHeightMap[targetFloor];
-    float currentHeight = bodyLink->GetWorldCoGPose().pos.z;
+    float currentHeight = bodyLink->WorldCoGPose().Pos().Z();
     float heightDiff = currentHeight - targetHeight;
 
     if (heightDiff > HEIGHT_LEVEL_TOLERANCE || heightDiff < HEIGHT_LEVEL_TOLERANCE)
@@ -290,15 +290,17 @@ private:
 
   void constrainHorizontalMovement()
   {
-    math::Pose currPose = model->GetWorldPose();
-    float currHeight = currPose.pos.z;
+    ignition::math::Pose3<double> currPose = model->WorldPose();
+    float currHeight = currPose.Pos().Z();
 
-    math::Pose stabilizedPose;
-    stabilizedPose.rot.x = stabilizedPose.rot.y = stabilizedPose.rot.z = 0;
+    ignition::math::Pose3<double> stabilizedPose;
+    stabilizedPose.Rot().X(0);
+    stabilizedPose.Rot().Y(0);
+    stabilizedPose.Rot().Z(0);
 
-    stabilizedPose.pos.x = spawnPosX;
-    stabilizedPose.pos.y = spawnPosY;
-    stabilizedPose.pos.z = currHeight;
+    stabilizedPose.Pos().X(spawnPosX);
+    stabilizedPose.Pos().Y(spawnPosY);
+    stabilizedPose.Pos().Z(currHeight);
 
     model->SetWorldPose(stabilizedPose);
   }
@@ -312,7 +314,7 @@ private:
 
   int estimateCurrFloor()
   {
-    float currHeight = bodyLink->GetWorldCoGPose().pos.z;
+    float currHeight = bodyLink->WorldCoGPose().Pos().Z();
 
     for (int i = 0; i < numFloors; i++)
     {
@@ -327,20 +329,20 @@ private:
 
   void moveUp()
   {
-    bodyLink->SetForce(math::Vector3(0, 0, elevForce));
-    bodyLink->SetLinearVel(math::Vector3(0, 0, elevSpeed));
+    bodyLink->SetForce(ignition::math::Vector3<double>(0, 0, elevForce));
+    bodyLink->SetLinearVel(ignition::math::Vector3<double>(0, 0, elevSpeed));
   }
 
   void moveDown()
   {
-    bodyLink->SetForce(math::Vector3(0, 0, -elevForce));
-    bodyLink->SetLinearVel(math::Vector3(0, 0, -elevSpeed));
+    bodyLink->SetForce(ignition::math::Vector3<double>(0, 0, -elevForce));
+    bodyLink->SetLinearVel(ignition::math::Vector3<double>(0, 0, -elevSpeed));
   }
 
   void stopMotion()
   {
-    bodyLink->SetForce(math::Vector3(0, 0, 0));
-    bodyLink->SetLinearVel(math::Vector3(0, 0, 0));
+    bodyLink->SetForce(ignition::math::Vector3<double>(0, 0, 0));
+    bodyLink->SetLinearVel(ignition::math::Vector3<double>(0, 0, 0));
   }
 
   void initVars()
@@ -352,8 +354,8 @@ private:
     replaceSubstring(elev_ref_num_str, model_domain_space, "");
     elev_ref_num = atoi(elev_ref_num_str.c_str());
 
-    spawnPosX = bodyLink->GetWorldPose().pos.x;
-    spawnPosY = bodyLink->GetWorldPose().pos.y;
+    spawnPosX = bodyLink->WorldPose().Pos().X();
+    spawnPosY = bodyLink->WorldPose().Pos().Y();
   }
 };
 

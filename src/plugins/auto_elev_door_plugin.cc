@@ -204,15 +204,15 @@ private:
     closeVel = direction == RIGHT ? slide_speed : -slide_speed;
 
     // compute slide constraints
-    float spawnPosX = model->GetWorldPose().pos.x;
+    float spawnPosX = model->WorldPose().Pos().X();
     minPosX = direction == RIGHT ? spawnPosX - max_trans_dist : spawnPosX;
     maxPosX = direction == RIGHT ? spawnPosX : spawnPosX + max_trans_dist;
 
-    float spawnPosY = model->GetWorldPose().pos.y;
+    float spawnPosY = model->WorldPose().Pos().Y();
     minPosY = direction == RIGHT ? spawnPosY - max_trans_dist : spawnPosY;
     maxPosY = direction == RIGHT ? spawnPosY : spawnPosY + max_trans_dist;
 
-    elevatorModel = model->GetWorld()->GetModel(elevator_ref_name);
+    elevatorModel = model->GetWorld()->ModelByName(elevator_ref_name);
   }
 
   void activateDoors()
@@ -222,8 +222,8 @@ private:
       return;
     }
 
-    float currElevHeight = elevatorModel->GetWorldPose().pos.z;
-    float currDoorHeight = model->GetWorldPose().pos.z;
+    float currElevHeight = elevatorModel->WorldPose().Pos().Z();
+    float currDoorHeight = model->WorldPose().Pos().Z();
     float doorElevHeightDiff = fabs(currElevHeight - currDoorHeight);
 
     // Primary condition: the elevator is behind the doors
@@ -251,46 +251,46 @@ private:
 
   void setDoorSlideVel(float vel)
   {
-    doorLink->SetLinearVel(math::Vector3(vel, vel, 0));                                 // we set the vel for both x & y directions since we don't know which direction the door is facing
+    doorLink->SetLinearVel(ignition::math::Vector3<double>(vel, vel, 0));                                 // we set the vel for both x & y directions since we don't know which direction the door is facing
   }
 
   void checkSlideConstraints()
   {
-    float currDoorPosX = model->GetWorldPose().pos.x;
-    float currDoorPosY = model->GetWorldPose().pos.y;
+    float currDoorPosX = model->WorldPose().Pos().X();
+    float currDoorPosY = model->WorldPose().Pos().Y();
 
-    math::Pose constrainedPose;
+    ignition::math::Pose3<double> constrainedPose;
 
     if (currDoorPosX > maxPosX)
     {
-      constrainedPose.pos.x = maxPosX;
+      constrainedPose.Pos().X(maxPosX);
     }
     else if (currDoorPosX < minPosX)
     {
-      constrainedPose.pos.x = minPosX;
+      constrainedPose.Pos().X(minPosX);
     }
     else
     {
-      constrainedPose.pos.x = currDoorPosX;
+      constrainedPose.Pos().X(currDoorPosX);
     }
 
     if (currDoorPosY > maxPosY)
     {
-      constrainedPose.pos.y = maxPosY;
+      constrainedPose.Pos().Y(maxPosY);
     }
     else if (currDoorPosY < minPosY)
     {
-      constrainedPose.pos.y = minPosY;
+      constrainedPose.Pos().Y(minPosY);
     }
     else
     {
-      constrainedPose.pos.y = currDoorPosY;
+      constrainedPose.Pos().Y(currDoorPosY);
     }
 
-    constrainedPose.pos.z = model->GetWorldPose().pos.z;
-    constrainedPose.rot.x = model->GetWorldPose().rot.x;
-    constrainedPose.rot.y = model->GetWorldPose().rot.y;
-    constrainedPose.rot.z = model->GetWorldPose().rot.z;
+    constrainedPose.Pos().Z(model->WorldPose().Pos().Z());
+    constrainedPose.Rot().X(model->WorldPose().Rot().X());
+    constrainedPose.Rot().Y(model->WorldPose().Rot().Y());
+    constrainedPose.Rot().Z(model->WorldPose().Rot().Z());
 
     model->SetWorldPose(constrainedPose);
   }
